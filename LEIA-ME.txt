@@ -1,0 +1,20 @@
+BPM / UFSC — Apresentação VR
+================================
+
+Conteúdo:
+- index.html
+- pasta slides/ com 14 imagens
+
+Teste no computador:
+1. Abra index.html no Chrome/Edge para verificar a navegação.
+2. Os botões Anterior/Próximo funcionam normalmente.
+
+Meta Quest / WebXR:
+1. Publique index.html e a pasta slides em um site HTTPS (por exemplo GitHub Pages).
+2. Abra o endereço no navegador do Meta Quest.
+3. Toque em "Entrar em VR".
+4. Dentro do VR, olhe para ANTERIOR ou PROXIMO por aproximadamente 1 segundo.
+   A navegação por olhar foi incluída para não depender do controle físico.
+
+Observação:
+O carregamento do A-Frame usa internet (CDN).

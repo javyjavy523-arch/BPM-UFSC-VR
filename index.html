@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>BPM / UFSC — Apresentação VR</title>
+  <style>
+    html,body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif}
+    .wrap{max-width:1200px;margin:auto;padding:18px}
+    .title{font-size:18px;font-weight:700;margin:0 0 12px}
+    .screen{background:#000;border-radius:12px;overflow:hidden;box-shadow:0 6px 30px #0008}
+    #flatSlide{display:block;width:100%;height:auto;background:#fff}
+    .bar{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    button{font-size:18px;padding:12px 20px;border-radius:10px;border:1px solid #777;background:#232323;color:#fff;min-width:130px}
+    button:disabled{opacity:.35}
+    #count{min-width:90px;text-align:center;font-size:18px}
+    .hint{color:#bbb;text-align:center;font-size:14px;margin-top:10px;line-height:1.4}
+    #vrLaunch{background:#153d2f;border-color:#3a765e}
+  </style>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+</head>
+<body>
+  <div class="wrap" id="flat">
+    <div class="title">Projeto PR — BPM / UFSC · Visualização dos 14 slides</div>
+    <div class="screen"><img id="flatSlide" src="slides/slide01.jpg" alt="Slide da apresentação"></div>
+    <div class="bar">
+      <button id="prev">◀ Anterior</button>
+      <span id="count">1 / 14</span>
+      <button id="next">Próximo ▶</button>
+      <button id="vrLaunch">Entrar em VR</button>
+    </div>
+    <div class="hint">
+      No Meta Quest, você pode apresentar primeiro nesta tela normal. Em VR, olhe para ◀ ou ▶ por cerca de 1 segundo para avançar, sem precisar de controle.
+    </div>
+  </div>
+
+  <a-scene id="scene" embedded style="display:none"
+           background="color: #0d0f12"
+           renderer="antialias: true; colorManagement: true"
+           vr-mode-ui="enabled: true">
+    <a-assets>
+      <img id="s01" src="slides/slide01.jpg">
+      <img id="s02" src="slides/slide02.jpg">
+      <img id="s03" src="slides/slide03.jpg">
+      <img id="s04" src="slides/slide04.jpg">
+      <img id="s05" src="slides/slide05.jpg">
+      <img id="s06" src="slides/slide06.jpg">
+      <img id="s07" src="slides/slide07.jpg">
+      <img id="s08" src="slides/slide08.jpg">
+      <img id="s09" src="slides/slide09.jpg">
+      <img id="s10" src="slides/slide10.jpg">
+      <img id="s11" src="slides/slide11.jpg">
+      <img id="s12" src="slides/slide12.jpg">
+      <img id="s13" src="slides/slide13.jpg">
+      <img id="s14" src="slides/slide14.jpg">
+    </a-assets>
+
+    <a-entity position="0 1.65 0">
+      <a-camera look-controls wasd-controls-enabled="false">
+        <a-cursor id="gaze"
+                  fuse="true"
+                  fuse-timeout="1100"
+                  raycaster="objects: .clickable; far: 12"
+                  geometry="primitive:ring; radiusInner:0.008; radiusOuter:0.014"
+                  material="color:#ffffff; shader:flat">
+        </a-cursor>
+      </a-camera>
+    </a-entity>
+
+    <!-- Presentation screen: 16:9 -->
+    <a-plane id="vrSlide" position="0 2.15 -4.2" width="5.6" height="3.15"
+             material="src:#s01; shader:flat; side:double"></a-plane>
+
+    <a-plane position="0 2.15 -4.23" width="5.72" height="3.27"
+             material="color:#222; shader:flat"></a-plane>
+
+    <a-box id="prev3d" class="clickable" position="-2.05 0.25 -3.65"
+           width="1.55" height=".55" depth=".08"
+           material="color:#25313d">
+      <a-text value="ANTERIOR" align="center" width="3.8" color="#fff" position="0 0 .05"></a-text>
+    </a-box>
+
+    <a-box id="next3d" class="clickable" position="2.05 0.25 -3.65"
+           width="1.55" height=".55" depth=".08"
+           material="color:#234c3a">
+      <a-text value="PROXIMO" align="center" width="3.8" color="#fff" position="0 0 .05"></a-text>
+    </a-box>
+
+    <a-text id="count3d" value="1 / 14" align="center" width="4"
+            position="0 .25 -3.58" color="#ddd"></a-text>
+
+    <a-text value="Olhe para um botao por 1 segundo" align="center" width="5"
+            position="0 -.15 -3.58" color="#888"></a-text>
+
+    <!-- simple floor reference -->
+    <a-plane rotation="-90 0 0" position="0 0 -4" width="14" height="14"
+             material="color:#15181c; roughness:1"></a-plane>
+  </a-scene>
+
+<script>
+(function(){
+  const total = 14;
+  let current = 1;
+  const flat = document.getElementById('flat');
+  const flatSlide = document.getElementById('flatSlide');
+  const count = document.getElementById('count');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const scene = document.getElementById('scene');
+  const vrSlide = document.getElementById('vrSlide');
+  const count3d = document.getElementById('count3d');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function update(){
+    flatSlide.src = 'slides/slide' + pad(current) + '.jpg';
+    count.textContent = current + ' / ' + total;
+    prev.disabled = current === 1;
+    next.disabled = current === total;
+    if (vrSlide) vrSlide.setAttribute('material','src:#s' + pad(current) + '; shader:flat; side:double');
+    if (count3d) count3d.setAttribute('value', current + ' / ' + total);
+  }
+  function go(delta){
+    current = Math.max(1, Math.min(total, current + delta));
+    update();
+  }
+
+  prev.addEventListener('click', ()=>go(-1));
+  next.addEventListener('click', ()=>go(1));
+  document.getElementById('prev3d').addEventListener('click', ()=>go(-1));
+  document.getElementById('next3d').addEventListener('click', ()=>go(1));
+
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight' || e.key==='PageDown') go(1);
+    if(e.key==='ArrowLeft' || e.key==='PageUp') go(-1);
+  });
+
+  document.getElementById('vrLaunch').addEventListener('click', async ()=>{
+    scene.style.display = 'block';
+    flat.style.display = 'none';
+    try{
+      if(scene.enterVR) await scene.enterVR();
+    }catch(e){
+      alert('O modo VR nao abriu automaticamente. Use o icone VR exibido na tela.');
+    }
+  });
+
+  scene.addEventListener('exit-vr', ()=>{
+    scene.style.display='none';
+    flat.style.display='block';
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
